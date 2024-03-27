@@ -1,5 +1,5 @@
 def follow_plan(plan):
-    """moves the actuator according to the plan, which is a pandas.Series of displacements in millimeters for each time. Blocks until the end of the plan.
+    """moves the actuator according to the plan, which is a pandas.Series of displacements in millimeters for each time. The actuator will move at a constant speed to the next position according to update_interval defined in user_config. Blocks until the end of the plan.
 
     Args:
         plan (pandas.Series): The displacement of the actuator in millimeters for each time.

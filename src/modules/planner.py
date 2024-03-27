@@ -1,10 +1,9 @@
-import actuation
-import matplotlib.pyplot as plt
 import pandas as pd
 from pvlib import solarposition, tracking
 
 import helpers.efficiency as efficiency
 import helpers.hardware_config as hardware_config
+import modules.actuation as actuation
 import user_config
 
 
@@ -15,17 +14,19 @@ def get_daily_plan():
     pandas.Series: The displacement of the actuator in millimeters for each time.
     """
     today = pd.Timestamp.now(tz=user_config.time_zone)
+    frequency = str(user_config.update_interval) + "min"
     times = pd.date_range(
-        today, today + pd.Timedelta(days=1), freq="5min", tz=user_config.tz
+        today, today + pd.Timedelta(days=1), freq=frequency, tz=user_config.tz
     )
-    angles = get_angles(times)
+    angles = _get_angles(times)
 
     tracker_angles = efficiency.optimize_tracker_angles(angles)
-
     displacements = actuation.angle_to_displacement(tracker_angles)
 
+    return displacements
 
-def get_angles(times):
+
+def _get_angles(times):
     """Determine the rotation angle for all times, along with the angle of incidence of the sun on the panel.
 
     Args:
