@@ -16,7 +16,7 @@ def get_daily_plan():
     today = pd.Timestamp.now(tz=user_config.time_zone)
     frequency = str(user_config.update_interval) + "min"
     times = pd.date_range(
-        today, today + pd.Timedelta(days=1), freq=frequency, tz=user_config.tz
+        today, today + pd.Timedelta(days=1), freq=frequency, tz=user_config.time_zone
     )
     angles = _get_angles(times)
 
