@@ -21,7 +21,7 @@ def get_daily_plan():
     angles = _get_angles(times)
 
     tracker_angles = efficiency.optimize_tracker_angles(angles)
-    displacements = actuation.angle_to_displacement(tracker_angles)
+    displacements = actuation.time_to_get_to_angle(tracker_angles)
 
     return displacements
 

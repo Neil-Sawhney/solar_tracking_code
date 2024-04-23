@@ -9,8 +9,8 @@ def follow_plan(plan):
     pass
 
 
-def angle_to_displacement(angles):
-    """Converts the desired rotation angle of the tracker to the requied displacement of the actuator.
+def time_to_get_to_angle(angles):
+    """Converts the desired rotation angle of the tracker to the required time to keep the actuator on for to get from each angle to the next.
 
     Args:
         angles (pandas.Series): dict or DataFrame with the following columns:
@@ -26,7 +26,7 @@ def angle_to_displacement(angles):
             surface. [degrees]
 
     Returns:
-        pandas.Series: The displacement of the actuator in millimeters.
+        pandas.Series: The time to keep the actuator on to get to the next angle in the plan.
 
     """
     # TODO: Implement this function
