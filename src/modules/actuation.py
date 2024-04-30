@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def follow_plan(plan):
     """moves the actuator according to the plan, which is a pandas.Series of actuation times milliseconds for each time. The actuator will move at a constant speed to the next position according to update_interval defined in user_config. Blocks until the end of the plan.
 
@@ -29,5 +32,8 @@ def time_to_get_to_angle(angles):
         pandas.Series: The time to keep the actuator on to get to the next angle in the plan.
 
     """
-    # TODO: Implement this function
-    pass
+
+    df = pd.read_csv("src/helpers/angle_vs_theta.csv", header=0)
+
+    t = df["t"].values
+    theta = df["theta"].values
