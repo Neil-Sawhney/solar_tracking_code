@@ -1,14 +1,14 @@
-import src.modules.actuation as actuation
+import src.helpers.gpio as gpio
 
 
 def test_expand_actuator():
-    actuation.expand_actuator(True)
+    gpio.expand_actuator(True)
     print("Expanding actuator")
     assert True
 
 
 def test_contract_actuator():
-    actuation.contract_actuator(True)
+    gpio.contract_actuator(True)
     print("Contracting actuator")
     assert True
 
