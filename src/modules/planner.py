@@ -1,9 +1,9 @@
 import pandas as pd
 from pvlib import solarposition, tracking
 
-import helpers.efficiency as efficiency
-import helpers.hardware_config as hardware_config
-import modules.actuation as actuation
+import src.helpers.efficiency as efficiency
+import src.helpers.hardware_config as hardware_config
+import src.modules.actuation as actuation
 import user_config
 
 
