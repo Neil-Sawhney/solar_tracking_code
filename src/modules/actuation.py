@@ -129,9 +129,9 @@ def _get_time_from_test_data(angle, is_expanding):
         int: time in milliseconds
     """
     if is_expanding:
-        df = pd.read_csv("src/helpers/expansion.csv", header=0)
+        df = pd.read_csv("./helpers/expansion.csv", header=0)
     else:
-        df = pd.read_csv("src/helpers/contraction.csv", header=0)
+        df = pd.read_csv("./helpers/contraction.csv", header=0)
 
     angle_list = df["theta"].values
 
