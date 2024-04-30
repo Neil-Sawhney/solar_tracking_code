@@ -1,5 +1,7 @@
 Python 3.9
 
+Update user_config.py with your own values
+
 Run chmod +x ./start_panel_process.sh to make the script executable
 Run chmod +x ./kill_panel_process.sh to make the script executable
 
