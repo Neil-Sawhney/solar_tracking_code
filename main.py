@@ -1,6 +1,6 @@
-import helpers.gpio as gpio
-from modules.actuation import follow_plan
-from modules.planner import get_daily_plan
+import src.helpers.gpio as gpio
+from src.modules.actuation import follow_plan
+from src.modules.planner import get_daily_plan
 
 
 def main():
