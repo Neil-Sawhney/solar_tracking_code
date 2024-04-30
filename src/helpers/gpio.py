@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 import src.helpers.hardware_config as cfg
 
@@ -8,11 +9,16 @@ GPIO.setup(cfg.contract_actuator_pin, GPIO.OUT)
 GPIO.setup(cfg.expand_actuator_pin, GPIO.OUT)
 
 
-def expand_actuator(bool):
+def expand_actuator(milliseconds):
     GPIO.output(cfg.expand_actuator_pin, bool)
     GPIO.output(cfg.contract_actuator_pin, not bool)
+    GPIO.output(cfg.contract_actuator_pin, not bool)
+    GPIO.output(cfg.expand_actuator_pin, not bool)
 
-
-def contract_actuator(bool):
+def contract_actuator(milliseconds):
     GPIO.output(cfg.contract_actuator_pin, bool)
     GPIO.output(cfg.expand_actuator_pin, not bool)
+    time.sleep(milliseconds)
+    GPIO.output(cfg.contract_actuator_pin, not bool)
+    GPIO.output(cfg.expand_actuator_pin, not bool)
+

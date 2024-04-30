@@ -4,16 +4,14 @@ import src.helpers.gpio as gpio
 
 
 def test_expand_actuator():
-    gpio.expand_actuator(True)
+    gpio.expand_actuator(10e3)
     print("Expanding actuator")
-    time.sleep(10)
     assert True
 
 
 def test_contract_actuator():
-    gpio.contract_actuator(True)
+    gpio.contract_actuator(8.5e3)
     print("Contracting actuator")
-    time.sleep(10)
     assert True
 
 
