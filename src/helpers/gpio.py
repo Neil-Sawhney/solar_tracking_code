@@ -1,5 +1,6 @@
-import hardware_config as cfg
 import RPi.GPIO as GPIO
+
+import src.helpers.hardware_config as cfg
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
