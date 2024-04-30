@@ -24,6 +24,5 @@ def test_get_time_from_test_data():
     angle = -32
     assert actuation._get_time_from_test_data(angle, is_expanding) == 425
 
-
-if __name__ == "__main__":
-    test_get_time_from_test_data()
+    angle = 0
+    assert actuation._get_time_from_test_data(angle, is_expanding) == 

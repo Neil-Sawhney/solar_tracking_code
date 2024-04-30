@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+import helpers.gpio as gpio
 import helpers.hardware_config as h_cfg
 
 
@@ -11,9 +12,24 @@ def follow_plan(plan):
         plan (pandas.Series): The actuation times of the actuator in milliseconds for each time.
 
     """
-    # TODO: Implement this function
-    # if the time
-    pass
+    current_plan_index = 0
+    current_time = pd.Timestamp.now(tz=h_cfg.time_zone)
+    next_move_time = plan.index[current_plan_index + 1]
+
+    while current_time < plan.index[-1]:
+        current_time = pd.Timestamp.now(tz=h_cfg.time_zone)
+
+        if current_time >= next_move_time:
+            current_plan_index += 1
+            next_move_time = plan.index[current_plan_index + 1]
+
+            actuation_time = plan.iloc[current_plan_index]
+            is_expanding = plan.iloc[current_plan_index]["is_expanding"]
+
+            if is_expanding:
+                gpio.expand_actuator(actuation_time)
+            else:
+                gpio.contract_actuator(actuation_time)
 
 
 def actuation_time_to_get_to_angle(angles):
@@ -39,27 +55,51 @@ def actuation_time_to_get_to_angle(angles):
     """
 
     # FIXME: edge cases
-    # FIXME: add a column for expanding or contracting
-    # make a column for actuation time
+
+    # make a column for actuation time and is_expanding
     angles["actuation_time"] = 0
-    actuation_time_index = angles.columns.get_loc("actuation_time")
+    angles["is_expanding"] = 0
 
     if not np.isnan(angles.iloc[0]["tracker_theta"]):
+
+        # if tracker_theta > max_compression_angle set tracker_theta to max_compression_angle
+        if angles.iloc[0]["tracker_theta"] > h_cfg.max_compression_angle:
+            angles.iat[0, angles.columns.get_loc("tracker_theta")] = (
+                h_cfg.max_compression_angle
+            )
+        # else if tracker_theta < max_expansion_angle set tracker_theta to max_expansion_angle
+        elif angles.iloc[0]["tracker_theta"] < h_cfg.max_expansion_angle:
+            angles.iat[0, angles.columns.get_loc("tracker_theta")] = (
+                h_cfg.max_expansion_angle
+            )
+
         is_contracting = (
-            True if angles.iloc[0]["tracker_theta"] > -h_cfg.max_angle else False
+            True if angles.iloc[0]["tracker_theta"] >= -h_cfg.max_angle else False
         )
         is_expanding = not is_contracting
 
-        angles.iat[0, actuation_time_index] = _get_time_from_test_data(
-            angles.iloc[0]["tracker_theta"], is_expanding
+        angles.iat[0, angles.columns.get_loc("actuation_time")] = (
+            _get_time_from_test_data(angles.iloc[0]["tracker_theta"], is_expanding)
         )
+        angles.iat[0, angles.columns.get_loc("is_expanding")] = int(is_expanding)
 
     for i in range(1, len(angles)):
         # get the angle
         angle = angles.iloc[i]["tracker_theta"]
-
-        # get the previous angle
         prev_angle = angles.iloc[i - 1]["tracker_theta"]
+
+        # if tracker_theta > max_compression_angle set tracker_theta to max_compression_angle
+        if angle > h_cfg.max_compression_angle:
+            angles.iat[i, angles.columns.get_loc("tracker_theta")] = (
+                h_cfg.max_compression_angle
+            )
+            angle = h_cfg.max_compression_angle
+        # else if tracker_theta < max_expansion_angle set tracker_theta to max_expansion_angle
+        elif angle < h_cfg.max_expansion_angle:
+            angles.iat[i, angles.columns.get_loc("tracker_theta")] = (
+                h_cfg.max_expansion_angle
+            )
+            angle = h_cfg.max_expansion_angle
 
         if np.isnan(angle) or np.isnan(prev_angle):
             continue
@@ -72,7 +112,8 @@ def actuation_time_to_get_to_angle(angles):
         ) - _get_time_from_test_data(prev_angle, is_expanding)
 
         # add the time to the series
-        angles.iat[i, actuation_time_index] = actuation_time
+        angles.iat[i, angles.columns.get_loc("actuation_time")] = actuation_time
+        angles.iat[i, angles.columns.get_loc("is_expanding")] = int(is_expanding)
 
     return angles
 
@@ -85,7 +126,7 @@ def _get_time_from_test_data(angle, is_expanding):
         is_expanding (bool): True if the actuator is expanding, False if contracting
 
     Returns:
-        float: time in milliseconds
+        int: time in milliseconds
     """
     if is_expanding:
         df = pd.read_csv("src/helpers/expansion.csv", header=0)
@@ -94,13 +135,13 @@ def _get_time_from_test_data(angle, is_expanding):
 
     angle_list = df["theta"].values
 
-    # Find the closest angle in the data
-    angle_small = min(angle_list, key=lambda x: abs(x - angle))
-    angle_big = max(angle_list, key=lambda x: abs(x - angle))
+    # Find the closest angle in the data before and after the desired angle
+    angle_small = angle_list[angle_list <= angle].max()
+    angle_big = angle_list[angle_list >= angle].min()
 
     time_small = df["t"].loc[df["theta"] == angle_small].values[0]
     time_big = df["t"].loc[df["theta"] == angle_big].values[0]
 
     time = np.interp(angle, [angle_small, angle_big], [time_small, time_big])
 
-    return time
+    return int(time)
