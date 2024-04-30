@@ -3,6 +3,7 @@ import pandas as pd
 
 import helpers.gpio as gpio
 import helpers.hardware_config as h_cfg
+import user_config as cfg
 
 
 def follow_plan(plan):
@@ -13,11 +14,11 @@ def follow_plan(plan):
 
     """
     current_plan_index = 0
-    current_time = pd.Timestamp.now(tz=h_cfg.time_zone)
+    current_time = pd.Timestamp.now(tz=cfg.time_zone)
     next_move_time = plan.index[current_plan_index + 1]
 
     while current_time < plan.index[-1]:
-        current_time = pd.Timestamp.now(tz=h_cfg.time_zone)
+        current_time = pd.Timestamp.now(tz=cfg.time_zone)
 
         if current_time >= next_move_time:
             current_plan_index += 1
