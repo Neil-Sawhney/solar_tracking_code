@@ -7,4 +7,5 @@ then
     nohup python -u ./main.py > output.log 2>&1 &
 fi
 
+cat output.log
 tail -f output.log
