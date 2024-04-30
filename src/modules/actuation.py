@@ -1,4 +1,7 @@
+import numpy as np
 import pandas as pd
+
+import helpers.hardware_config as h_cfg
 
 
 def follow_plan(plan):
@@ -9,10 +12,11 @@ def follow_plan(plan):
 
     """
     # TODO: Implement this function
+    # if the time
     pass
 
 
-def time_to_get_to_angle(angles):
+def actuation_time_to_get_to_angle(angles):
     """Converts the desired rotation angle of the tracker to the required time to keep the actuator on to get from each angle to the next.
 
     Args:
@@ -31,21 +35,72 @@ def time_to_get_to_angle(angles):
     Returns:
         pandas.Series: The time to keep the actuator on to get to the next angle in the plan.
 
+
     """
 
+    # FIXME: edge cases
+    # FIXME: add a column for expanding or contracting
+    # make a column for actuation time
+    angles["actuation_time"] = 0
+    actuation_time_index = angles.columns.get_loc("actuation_time")
 
-def _get_angle_from_time(t):
-    """Pull from test data to get the angle from the time
+    if not np.isnan(angles.iloc[0]["tracker_theta"]):
+        is_contracting = (
+            True if angles.iloc[0]["tracker_theta"] > -h_cfg.max_angle else False
+        )
+        is_expanding = not is_contracting
+
+        angles.iat[0, actuation_time_index] = _get_time_from_test_data(
+            angles.iloc[0]["tracker_theta"], is_expanding
+        )
+
+    for i in range(1, len(angles)):
+        # get the angle
+        angle = angles.iloc[i]["tracker_theta"]
+
+        # get the previous angle
+        prev_angle = angles.iloc[i - 1]["tracker_theta"]
+
+        if np.isnan(angle) or np.isnan(prev_angle):
+            continue
+
+        is_expanding = True if angle < prev_angle else False
+
+        # get the time it takes to get to the angle
+        actuation_time = _get_time_from_test_data(
+            angle, is_expanding
+        ) - _get_time_from_test_data(prev_angle, is_expanding)
+
+        # add the time to the series
+        angles.iat[i, actuation_time_index] = actuation_time
+
+    return angles
+
+
+def _get_time_from_test_data(angle, is_expanding):
+    """Pull from test data to get the time it takes to get the actuator to a certain angle.
 
     Args:
-        t (int): time in milliseconds
+        angle (int): angle in degrees
+        is_expanding (bool): True if the actuator is expanding, False if contracting
 
     Returns:
-        float: angle in degrees
+        float: time in milliseconds
     """
-    df = pd.read_csv("src/helpers/angle_vs_theta.csv", header=0)
+    if is_expanding:
+        df = pd.read_csv("src/helpers/expansion.csv", header=0)
+    else:
+        df = pd.read_csv("src/helpers/contraction.csv", header=0)
 
-    t = df["t"].values
-    theta = df["theta"].values
+    angle_list = df["theta"].values
 
-    return theta
+    # Find the closest angle in the data
+    angle_small = min(angle_list, key=lambda x: abs(x - angle))
+    angle_big = max(angle_list, key=lambda x: abs(x - angle))
+
+    time_small = df["t"].loc[df["theta"] == angle_small].values[0]
+    time_big = df["t"].loc[df["theta"] == angle_big].values[0]
+
+    time = np.interp(angle, [angle_small, angle_big], [time_small, time_big])
+
+    return time
