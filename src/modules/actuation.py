@@ -32,9 +32,13 @@ def follow_plan(plan):
             )
 
             if is_expanding:
-                gpio.expand_actuator(actuation_time)
+                gpio.expand_actuator(
+                    actuation_time + h_cfg.starting_actuation_time_offset
+                )
             else:
-                gpio.contract_actuator(actuation_time)
+                gpio.contract_actuator(
+                    actuation_time + h_cfg.starting_actuation_time_offset
+                )
 
 
 def actuation_time_to_get_to_angle(angles):
