@@ -2,7 +2,7 @@ import time
 
 import RPi.GPIO as GPIO
 
-import helpers.hardware_config as cfg
+import src.helpers.hardware_config as cfg
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
