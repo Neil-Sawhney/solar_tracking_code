@@ -27,6 +27,10 @@ def follow_plan(plan):
             actuation_time = plan.iloc[current_plan_index]
             is_expanding = plan.iloc[current_plan_index]["is_expanding"]
 
+            print(
+                f"Moving actuator at {current_time} to {plan.iloc[current_plan_index]['tracker_theta']} degrees"
+            )
+
             if is_expanding:
                 gpio.expand_actuator(actuation_time)
             else:
