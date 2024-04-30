@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-import helpers.gpio as gpio
-import helpers.hardware_config as h_cfg
+import src.helpers.gpio as gpio
+import src.helpers.hardware_config as h_cfg
 
 
 def follow_plan(plan):
