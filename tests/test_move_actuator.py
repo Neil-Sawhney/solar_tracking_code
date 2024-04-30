@@ -30,5 +30,6 @@ def test_angles_at_times():
 
 
 if __name__ == "__main__":
-    test_expand_actuator()
-    test_contract_actuator()
+    # test_expand_actuator()
+    # test_contract_actuator()
+    test_angles_at_times()

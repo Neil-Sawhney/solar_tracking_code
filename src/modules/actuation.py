@@ -33,7 +33,19 @@ def time_to_get_to_angle(angles):
 
     """
 
+
+def _get_angle_from_time(t):
+    """Pull from test data to get the angle from the time
+
+    Args:
+        t (int): time in milliseconds
+
+    Returns:
+        float: angle in degrees
+    """
     df = pd.read_csv("src/helpers/angle_vs_theta.csv", header=0)
 
     t = df["t"].values
     theta = df["theta"].values
+
+    return theta
