@@ -8,10 +8,10 @@ import user_config
 
 
 def get_daily_plan():
-    """Determine the displacement of the linear actuator for all times from the current time to midnight.
+    """Determine the actuation time of the linear actuator for all times from the current time to midnight.
 
     Returns:
-    pandas.Series: The displacement of the actuator in millimeters for each time.
+    pandas.Series: The actuator time in milliseconds for each time.
     """
     today = pd.Timestamp.now(tz=user_config.time_zone)
     frequency = str(user_config.update_interval) + "min"
@@ -21,9 +21,9 @@ def get_daily_plan():
     angles = _get_angles(times)
 
     tracker_angles = efficiency.optimize_tracker_angles(angles)
-    displacements = actuation.time_to_get_to_angle(tracker_angles)
+    actuator_times = actuation.time_to_get_to_angle(tracker_angles)
 
-    return displacements
+    return actuator_times
 
 
 def _get_angles(times):
