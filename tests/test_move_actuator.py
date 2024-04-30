@@ -1,6 +1,6 @@
 import time
 
-import src.helpers.gpio as gpio
+import helpers.gpio as gpio
 
 
 def test_expand_actuator():
