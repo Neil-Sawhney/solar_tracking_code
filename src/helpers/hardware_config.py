@@ -5,4 +5,4 @@ max_angle = 35.3  # TODO: we need to decide this value
 max_compression_angle = 30.4
 max_expansion_angle = -35.3
 
-starting_actuation_time_offset = 7  # milliseconds
+starting_actuation_time_offset = 0  # milliseconds

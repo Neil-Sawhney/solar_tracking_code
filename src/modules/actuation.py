@@ -17,6 +17,18 @@ def follow_plan(plan):
     current_time = pd.Timestamp.now(tz=cfg.time_zone)
     next_move_time = plan.index[current_plan_index + 1]
 
+    actuation_time = plan.iloc[0]["actuation_time"]
+    is_expanding = plan.iloc[0]["is_expanding"]
+
+    print(
+        f"Moving actuator at {current_time} to {plan.iloc[0]['tracker_theta']} degrees"
+    )
+
+    if is_expanding:
+        gpio.expand_actuator(actuation_time + h_cfg.starting_actuation_time_offset)
+    else:
+        gpio.contract_actuator(actuation_time + h_cfg.starting_actuation_time_offset)
+
     while current_time < plan.index[-1]:
         current_time = pd.Timestamp.now(tz=cfg.time_zone)
 
