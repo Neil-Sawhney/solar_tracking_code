@@ -84,5 +84,6 @@ def test_expansion_consistency():
             # home the actuator
             time.sleep(0.1)
             gpio.home_actuator()
+            gpio.contract_actuator(8500)
             time.sleep(0.1)
     assert True
