@@ -37,12 +37,13 @@ def test_contraction_consistency():
     ]
     for _ in range(num_of_tests):
         for actuation_time, angle in angle_list:
-            # contract the actuator to the desired angle
-            gpio.contract_actuator(actuation_time)
-
             # home the actuator
             time.sleep(0.1)
             gpio.home_actuator()
+            time.sleep(0.1)
+
+            # contract the actuator to the desired angle
+            gpio.contract_actuator(actuation_time)
 
             time.sleep(5)
     assert True
