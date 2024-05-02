@@ -36,9 +36,9 @@ def test_contraction_consistency():
             (8075, 29.4),
             (8500, 30.4),
         ]
-        for time, angle in angle_list:
+        for actuation_time, angle in angle_list:
             # contract the actuator to the desired angle
-            gpio.contract_actuator(time)
+            gpio.contract_actuator(actuation_time)
             print("Contracting actuator to", angle)
 
             # home the actuator
@@ -76,9 +76,9 @@ def test_expansion_consistency():
     ]
 
     for _ in range(num_of_tests):
-        for time, angle in angle_list:
+        for actuation_time, angle in angle_list:
             # expand the actuator to the desired angle
-            gpio.expand_actuator(time)
+            gpio.expand_actuator(actuation_time)
             print("Expanding actuator to", angle)
 
             # home the actuator
