@@ -24,3 +24,7 @@ def contract_actuator(milliseconds):
     time.sleep(milliseconds / 1000)
     GPIO.output(cfg.expand_actuator_pin, 0)
     GPIO.output(cfg.contract_actuator_pin, 0)
+
+
+def home_actuator():
+    expand_actuator(10e3)
