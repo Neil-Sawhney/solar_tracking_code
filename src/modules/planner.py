@@ -15,6 +15,7 @@ def get_daily_plan():
     """
     today = pd.Timestamp.now(tz=user_config.time_zone)
     frequency = str(user_config.update_interval) + "min"
+    # TODO: switch this back to 1d
     times = pd.date_range(
         today,
         today + pd.Timedelta("3d"),
