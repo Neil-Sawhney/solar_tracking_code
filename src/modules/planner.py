@@ -14,11 +14,11 @@ def get_daily_plan():
     pandas.Series: The actuator time in milliseconds for each time.
     """
     today = pd.Timestamp.now(tz=user_config.time_zone)
+    tomorrow = today + pd.Timedelta(days=1)
     frequency = str(user_config.update_interval) + "min"
-    # TODO: switch this back to 1d
     times = pd.date_range(
         today,
-        today + pd.Timedelta("3d"),
+        tomorrow.replace(hour=0, minute=0, second=0, microsecond=0),
         freq=frequency,
         tz=user_config.time_zone,
     )
